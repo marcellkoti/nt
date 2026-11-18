@@ -1,0 +1,21 @@
+Marketing előadás a következő cégek bemutatása 10 percben.
+3-4 ember. mindenki beszél
+2 óra felkészülés
+erre 3 óra van.
+
+Ubiquiti Inc
+Mikrotik
+Cisco Systems
+Huawei
+Hewlett Packard Enterprise
+Aruba
+Palo Alto
+
+1 hét felkészülés
+2 óra vita:
+Súlyozás
+Vitatémák
+- Licencelés
+- AI a hálózatban
+- Gyártófüggőség - nyílt szabvány
+- Globális ellátási láncok

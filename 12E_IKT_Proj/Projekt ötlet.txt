@@ -1,0 +1,5 @@
+6 switch összekötése
+STP beállítása
+Etherchannel beállítása
+Befolyásolni, melyik legyen a root bridge
+Befolyásolni, melyik legyen a root path
