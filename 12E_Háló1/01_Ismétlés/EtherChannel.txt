@@ -1,0 +1,289 @@
+EtherChannel összefoglaló
+1. Mi az EtherChannel?
+Fogalom	Rövid magyarázatEtherChannel	Több fizikai Ethernet kapcsolatot egyetlen logikai kapcsolattá fog össze.
+Port-channel	Az összefogott fizikai portokból létrejövő logikai interfész.
+Előny	Nagyobb rendelkezésre állás és nagyobb összesített sávszélesség.
+Redundancia	Ha az egyik fizikai kapcsolat kiesik, a többi kapcsolat tovább működhet.
+STP	A Spanning Tree az EtherChannelt egyetlen logikai kapcsolatként kezeli.
+Terheléselosztás	A forgalom az EtherChannel fizikai linkjei között osztható el.
+Egyszerű példa
+Plain Text
+1
+SW1 SW2
+2
++-------+ +-------+
+3
+Gi0/1|=======|===================|=======|Gi0/1
+4
+Gi0/2|=======|===================|=======|Gi0/2
+5
++-------+ +-------+
+6
+\ /
+7
++---- Port-channel ---+
+További vonalak megjelenítése
+
+A két fizikai kapcsolat együtt egy EtherChannelt alkot.
+
+2. EtherChannel módok
+Technológia	Mód	JelentéseLACP	active	Aktívan kezdeményezi az EtherChannel kialakítását.
+LACP	passive	Várja, hogy a másik eszköz kezdeményezzen.
+PAgP	desirable	Aktívan kezdeményezi a csatorna kialakítását.
+PAgP	auto	Várja a PAgP kezdeményezését.
+Statikus	on	Nincs egyeztető protokoll, a portokat közvetlenül összefogja.
+Fontos párosítások
+Oldal 1	Oldal 2	Működik?LACP active	LACP active	✅
+LACP active	LACP passive	✅
+LACP passive	LACP passive	❌
+PAgP desirable	PAgP desirable	✅
+PAgP desirable	PAgP auto	✅
+PAgP auto	PAgP auto	❌
+on	on	✅
+
+💡 Tanulási tipp: LACP esetén legalább az egyik oldal legyen active, PAgP esetén legalább az egyik oldal legyen desirable.
+
+3. LACP EtherChannel beállítása
+
+Tegyük fel, hogy az SW1 és SW2 Gi0/1 és Gi0/2 interfészeit szeretnénk összefogni. A Port-channel száma legyen 1.
+
+SW1
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+enable
+2
+configure terminal
+3
+ 
+4
+interface range gi0/1 - 2
+5
+switchport mode trunk
+6
+channel-group 1 mode active
+7
+exit
+8
+ 
+9
+interface port-channel 1
+10
+switchport mode trunk
+11
+exit
+12
+ 
+13
+end
+További vonalak megjelenítése
+SW2
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+enable
+2
+configure terminal
+3
+ 
+4
+interface range gi0/1 - 2
+5
+switchport mode trunk
+6
+channel-group 1 mode passive
+7
+exit
+8
+ 
+9
+interface port-channel 1
+10
+switchport mode trunk
+11
+exit
+12
+ 
+13
+end
+További vonalak megjelenítése
+
+Eredmény:
+
+Plain Text
+1
+Gi0/1 ─┐ ┌─ Gi0/1
+2
+├── Po1 / LACP ───┤
+3
+Gi0/2 ─┘ └─ Gi0/2
+4
+SW1 SW2
+További vonalak megjelenítése
+4. PAgP konfiguráció
+
+A működési elv hasonló, csak a channel-group módja változik.
+
+SW1
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+interface range gi0/1 - 2
+2
+switchport mode trunk
+3
+channel-group 1 mode desirable
+További vonalak megjelenítése
+SW2
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+interface range gi0/1 - 2
+2
+switchport mode trunk
+3
+channel-group 1 mode auto
+További vonalak megjelenítése
+5. Statikus EtherChannel
+
+Ebben az esetben nincs LACP vagy PAgP egyeztetés.
+
+Mindkét switchen:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+interface range gi0/1 - 2
+2
+switchport mode trunk
+3
+channel-group 1 mode on
+További vonalak megjelenítése
+
+⚠️ Az on módot mindkét oldalon megfelelően kell konfigurálni. Oktatási környezetben az LACP használata általában jobb példa, mert a két eszköz egyezteti az EtherChannel létrejöttét.
+
+6. Ellenőrző parancsok
+Mit ellenőrzünk?	Mire figyeljünk?EtherChannel összefoglaló	Létrejött-e a Port-channel, és mely interfészek tartoznak hozzá?
+Port-channel állapota	Működik-e a logikai interfész?
+LACP	Megjelent-e a szomszédos LACP eszköz?
+Trunk	Trunkként működik-e a Port-channel?
+Interfészek	up/up állapotban vannak-e?
+Hasznos Cisco parancsok
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+show etherchannel summary
+További vonalak megjelenítése
+
+Ez az egyik legfontosabb ellenőrző parancs.
+
+Továbbiak:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+show etherchannel
+2
+show interfaces port-channel 1
+3
+show interfaces trunk
+4
+show lacp neighbor
+5
+show interfaces status
+További vonalak megjelenítése
+
+A konfiguráció ellenőrzésére:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+show running-config
+További vonalak megjelenítése
+7. show etherchannel summary értelmezése
+
+Például:
+
+Plain Text
+1
+Group Port-channel Protocol Ports
+2
+------+-------------+-----------+----------------
+3
+1 Po1(SU) LACP Gi0/1(P) Gi0/2(P)
+További vonalak megjelenítése
+Jelölés	JelentésPo1	Port-channel 1
+S	Layer 2 EtherChannel
+U	Az EtherChannel használatban van
+P	A fizikai port megfelelően bekerült a Port-channelbe
+LACP	Az EtherChannel LACP protokollt használ
+
+Ideális esetben tehát például ezt szeretnénk látni:
+
+Plain Text
+1
+Po1(SU)
+2
+Gi0/1(P)
+3
+Gi0/2(P)
+További vonalak megjelenítése
+8. Gyakori hibák
+Hiba	Következmény / megoldásMindkét oldal LACP passive	Nem jön létre az EtherChannel. Az egyik legyen active.
+Mindkét oldal PAgP auto	Nem jön létre az EtherChannel. Az egyik legyen desirable.
+Eltérő portbeállítások	Az EtherChannel nem vagy hibásan állhat össze.
+Trunk konfiguráció eltér	Ellenőrizni kell mindkét switch beállításait.
+Rossz port került a channel-groupba	Ellenőrizd a show etherchannel summary kimenetét.
+Fizikai link hibás	Ellenőrizd a portok állapotát és a kábelezést.
+Gyors tanulási séma
+
+EtherChannel = több fizikai kapcsolat → egy logikai Port-channel
+
+Plain Text
+1
+EtherChannel
+2
+│
+3
+┌──────────┴──────────┐
+4
+│ │
+5
+LACP PAgP
+6
+│ │
+7
+active / passive desirable / auto
+8
+│
+9
+└── szabványos IEEE megoldás
+További vonalak megjelenítése
+A 3 legfontosabb parancs vizsgára
+
+Beállítás:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+interface range gi0/1 - 2
+2
+channel-group 1 mode active
+További vonalak megjelenítése
+
+Ellenőrzés:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+1
+show etherchannel summary
+További vonalak megjelenítése
+
+LACP ellenőrzés:
+
+Plain Text
+cisco nem teljesen támogatott. A szintaktikai kiemelés a Plain Text alapul.
+show lacp neighbor
+További vonalak megjelenítése
+
+Lényeg egy mondatban: az EtherChannel több fizikai switchkapcsolatot egyetlen logikai Port-channel kapcsolatba fog össze, ezzel növelve a rendelkezésre állást és az összesített kapacitást.

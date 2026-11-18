@@ -1,0 +1,39 @@
+Download and install the latest VirtualBox on your system.
+
+Download the latest pfSense ISO (AMD64, ISO Image) and save it locally.
+
+Install 7-Zip and extract the downloaded pfSense-amd64.iso.gz file.
+
+Open VirtualBox and click New to create a new VM.
+
+Enter a VM name (e.g., pfSense) and choose BSD as Type, FreeBSD (64-bit) as Version.
+
+Assign at least 1024 MB RAM and 1–2 CPUs to the VM.
+
+Create a virtual hard disk of at least 10 GB (more if installing many packages).
+
+In Settings > Network, enable Adapter 1 as NAT (WAN).
+
+Enable Adapter 2 as Internal Network (LAN) and name it intnet.
+
+(Optional) Enable Adapter 3 as Internal Network for OPT interface.
+
+Start the VM and boot from the pfSense ISO.
+
+On the first screen, wait for the installer to start, then select Accept.
+
+Choose Install pfSense, select your keymap, and confirm.
+
+Select Auto (ZFS), then stripe, and choose the VBOX HARDDISK.
+
+Confirm formatting and start the installation.
+
+When complete, select No for additional changes.
+
+Unmount the ISO via Devices > Optical Drives and reboot.
+
+On first boot, pfSense will assign WAN/LAN interfaces automatically.
+
+From another VM on the same Internal Network, open a browser to https://192.168.1.1.
+
+Log in with admin / pfsense and run the Initial Configuration Wizard.
