@@ -1,4 +1,4 @@
 # nt
 
-lm studio
+lm studio,
 voidtools - fajlkereso
